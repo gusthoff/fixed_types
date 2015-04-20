@@ -1,0 +1,36 @@
+with "../fixed_types.gpr";
+
+project Fixed_Types_Test is
+
+   package Naming is
+      for Spec_Suffix ("ada") use ".ads";
+      for Body_Suffix ("ada") use ".adb";
+      for Separate_Suffix use ".adb";
+      for Dot_Replacement use "-";
+   end Naming;
+
+   for Source_Dirs use ("src/**");
+   for Object_Dir use "./obj";
+   for Exec_Dir use "./bin";
+   for Main use ("fixed_types_test.adb");
+
+   package Ide is
+      for Vcs_Kind use "Git";
+      for Documentation_Dir use "./doc";
+   end Ide;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-gnato", "-gnatVa", "-gnatwa", "-fstack-check", "-gnatyy", "-g");
+   end Compiler;
+
+   package Linker is
+      for Default_Switches ("ada") use ("-g");
+   end Linker;
+
+   package Builder is
+      for Default_Switches ("ada") use ("-g");
+   end Builder;
+
+
+end Fixed_Types_Test;
+
