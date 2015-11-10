@@ -35,7 +35,6 @@ package Fixed_Types.Long is
 
    type Fixed_Long is delta 1.0 / 2.0 ** (Fixed_Depth - 1) range -1.0 .. 1.0
      with Size => Fixed_Depth;
-   --   for Fixed_Long'Small use 1.0/2.0**(Fixed_Depth-1);
 
    type Fixed_Sat_Long is new Fixed_Long;
 
@@ -43,7 +42,22 @@ package Fixed_Types.Long is
    pragma Suppress (Range_Check, on => Fixed_Long);
    --      pragma Suppress (All_checks, on => Fixed_Long);
 
+   type Fixed_Integer_Long is new Integer
+     with Size => Fixed_Depth;
+
    type Modular_Long is mod 2 ** Fixed_Depth with Size => Fixed_Depth;
+
+   function To_Fixed_Integer_Long is new
+     Ada.Unchecked_Conversion (Fixed_Long, Fixed_Integer_Long);
+
+   function To_Fixed_Integer_Long is new
+     Ada.Unchecked_Conversion (Fixed_Sat_Long, Fixed_Integer_Long);
+
+   function To_Fixed_Long is new
+     Ada.Unchecked_Conversion (Fixed_Integer_Long, Fixed_Long);
+
+   function To_Fixed_Sat_Long is new
+     Ada.Unchecked_Conversion (Fixed_Integer_Long, Fixed_Sat_Long);
 
    function Fixed_Long_To_Mod_Long is new
      Ada.Unchecked_Conversion (Fixed_Long, Modular_Long);
@@ -52,10 +66,16 @@ package Fixed_Types.Long is
      Ada.Unchecked_Conversion (Fixed_Sat_Long, Modular_Long);
 
    overriding
+   function "abs" (A : Fixed_Sat_Long) return Fixed_Sat_Long;
+
+   overriding
    function "+" (A, B : Fixed_Sat_Long) return Fixed_Sat_Long;
 
    overriding
    function "-" (A, B : Fixed_Sat_Long) return Fixed_Sat_Long;
+
+   overriding
+   function "-" (A : Fixed_Sat_Long) return Fixed_Sat_Long;
 
    not overriding
    function "*" (A, B : Fixed_Sat_Long) return Fixed_Sat_Long;
@@ -64,3 +84,4 @@ package Fixed_Types.Long is
    function "*" (A :  Fixed_Sat_Long; B : Integer) return Fixed_Sat_Long;
 
 end Fixed_Types.Long;
+

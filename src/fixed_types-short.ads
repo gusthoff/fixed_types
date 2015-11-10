@@ -35,24 +35,47 @@ package Fixed_Types.Short is
 
    type Fixed_Short is delta 1.0 / 2.0 ** (Fixed_Depth - 1) range -1.0 .. 1.0
      with Size => Fixed_Depth;
-   --     for Fixed_Long'Small use 1.0/2.0**(Fixed_Depth-1);
 
    type Fixed_Sat_Short is new Fixed_Short;
 
---   pragma Suppress (Overflow_Check, on => Fixed_Short);
---   pragma Suppress (Range_Check, on => Fixed_Short);
-   pragma Suppress (All_checks, on => Fixed_Short);
+   pragma Suppress (Overflow_Check, on => Fixed_Short);
+   pragma Suppress (Range_Check, on => Fixed_Short);
+--   pragma Suppress (All_checks, on => Fixed_Short);
+
+   type Fixed_Integer_Short is new Short_Integer
+     with Size => Fixed_Depth;
 
    type Modular_Short is mod 2 ** Fixed_Depth with Size => Fixed_Depth;
 
+   function To_Fixed_Integer_Short is new
+     Ada.Unchecked_Conversion (Fixed_Short, Fixed_Integer_Short);
+
+   function To_Fixed_Integer_Short is new
+     Ada.Unchecked_Conversion (Fixed_Sat_Short, Fixed_Integer_Short);
+
+   function To_Fixed_Short is new
+     Ada.Unchecked_Conversion (Fixed_Integer_Short, Fixed_Short);
+
+   function To_Fixed_Sat_Short is new
+     Ada.Unchecked_Conversion (Fixed_Integer_Short, Fixed_Sat_Short);
+
    function Fixed_Short_To_Mod_Short is new
      Ada.Unchecked_Conversion (Fixed_Short, Modular_Short);
+
+   function Fixed_Sat_Short_To_Mod_Short is new
+     Ada.Unchecked_Conversion (Fixed_Sat_Short, Modular_Short);
+
+   overriding
+   function "abs" (A : Fixed_Sat_Short) return Fixed_Sat_Short;
 
    overriding
    function "+" (A, B : Fixed_Sat_Short) return Fixed_Sat_Short;
 
    overriding
    function "-" (A, B : Fixed_Sat_Short) return Fixed_Sat_Short;
+
+   overriding
+   function "-" (A : Fixed_Sat_Short) return Fixed_Sat_Short;
 
    not overriding
    function "*" (A, B : Fixed_Sat_Short) return Fixed_Sat_Short;
@@ -61,3 +84,4 @@ package Fixed_Types.Short is
    function "*" (A :  Fixed_Sat_Short; B : Integer) return Fixed_Sat_Short;
 
 end Fixed_Types.Short;
+

@@ -32,45 +32,69 @@
 package body Fixed_Types.Short is
 
    overriding
-   function "+" (A, B : Fixed_Sat_Short) return Fixed_Sat_Short is
-      pragma Unsuppress (Overflow_Check);
+   function "abs" (A : Fixed_Sat_Short) return Fixed_Sat_Short is
    begin
-      return Fixed_Sat_Short (Fixed_Short (A) + Fixed_Short (B));
-   exception
-      when Constraint_Error =>
-         if A > 0.0 and B > 0.0 then
-            return Fixed_Sat_Short'Last;
-         else
-            return Fixed_Sat_Short'First;
-         end if;
+      if A = Fixed_Sat_Short'First then
+         return Fixed_Sat_Short'Last;
+      else
+         return Fixed_Sat_Short (abs Fixed_Short (A));
+      end if;
+   end "abs";
+
+   overriding
+   function "+" (A, B : Fixed_Sat_Short) return Fixed_Sat_Short is
+      pragma Suppress (Overflow_Check);
+      C    : Fixed_Integer_Short;
+      Zero : constant Fixed_Integer_Short := 0;
+   begin
+      C := To_Fixed_Integer_Short (A) + To_Fixed_Integer_Short (B);
+
+      if A > 0.0 and then B > 0.0 and then C < Zero then
+         return Fixed_Sat_Short'Last;
+      elsif A < 0.0 and then B < 0.0 and then C > Zero then
+         return Fixed_Sat_Short'First;
+      else
+         return To_Fixed_Sat_Short (C);
+      end if;
    end "+";
 
    overriding
    function "-" (A, B : Fixed_Sat_Short) return Fixed_Sat_Short is
-      pragma Unsuppress (Overflow_Check);
+      pragma Suppress (Overflow_Check);
+      C    : Fixed_Integer_Short;
+      Zero : constant Fixed_Integer_Short := 0;
    begin
-      return Fixed_Sat_Short (Fixed_Short (A) - Fixed_Short (B));
-   exception
-      when Constraint_Error =>
-         if A > 0.0 and B < 0.0 then
-            return Fixed_Sat_Short'Last;
-         else
-            return Fixed_Sat_Short'First;
-         end if;
+      C := To_Fixed_Integer_Short (A) - To_Fixed_Integer_Short (B);
+
+      if A > 0.0 and then B < 0.0 and then C < Zero then
+         return Fixed_Sat_Short'Last;
+      elsif A < 0.0 and then B > 0.0 and then C > Zero then
+         return Fixed_Sat_Short'First;
+      else
+         return To_Fixed_Sat_Short (C);
+      end if;
+   end "-";
+
+   overriding
+   function "-" (A : Fixed_Sat_Short) return Fixed_Sat_Short is
+      pragma Suppress (Overflow_Check);
+   begin
+      if A = Fixed_Sat_Short'First then
+         return Fixed_Sat_Short'Last;
+      else
+         return Fixed_Sat_Short (-Fixed_Short (A));
+      end if;
    end "-";
 
    not overriding
    function "*" (A, B : Fixed_Sat_Short) return Fixed_Sat_Short is
-      pragma Unsuppress (Overflow_Check);
+      pragma Suppress (Overflow_Check);
    begin
-      return Fixed_Sat_Short (Fixed_Short (A) * Fixed_Short (B));
-   exception
-      when Constraint_Error =>
-         if (A > 0.0 and B > 0.0) or (A < 0.0 and B < 0.0) then
-            return Fixed_Sat_Short'Last;
-         else
-            return Fixed_Sat_Short'First;
-         end if;
+      if A = Fixed_Sat_Short'First and then B = Fixed_Sat_Short'First then
+         return Fixed_Sat_Short'Last;
+      else
+         return Fixed_Sat_Short (Fixed_Short (A) * Fixed_Short (B));
+      end if;
    end "*";
 
    overriding
@@ -88,3 +112,4 @@ package body Fixed_Types.Short is
    end "*";
 
 end Fixed_Types.Short;
+

@@ -30,45 +30,69 @@
 package body Fixed_Types.Long is
 
    overriding
-   function "+" (A, B : Fixed_Sat_Long) return Fixed_Sat_Long is
-      pragma Unsuppress (Overflow_Check);
+   function "abs" (A : Fixed_Sat_Long) return Fixed_Sat_Long is
    begin
-      return Fixed_Sat_Long (Fixed_Long (A) + Fixed_Long (B));
-   exception
-      when Constraint_Error =>
-         if A > 0.0 and B > 0.0 then
-            return Fixed_Sat_Long'Last;
-         else
-            return Fixed_Sat_Long'First;
-         end if;
+      if A = Fixed_Sat_Long'First then
+         return Fixed_Sat_Long'Last;
+      else
+         return Fixed_Sat_Long (abs Fixed_Long (A));
+      end if;
+   end "abs";
+
+   overriding
+   function "+" (A, B : Fixed_Sat_Long) return Fixed_Sat_Long is
+      pragma Suppress (Overflow_Check);
+      C    : Fixed_Integer_Long;
+      Zero : constant Fixed_Integer_Long := 0;
+   begin
+      C := To_Fixed_Integer_Long (A) + To_Fixed_Integer_Long (B);
+
+      if A > 0.0 and then B > 0.0 and then C < Zero then
+         return Fixed_Sat_Long'Last;
+      elsif A < 0.0 and then B < 0.0 and then C > Zero then
+         return Fixed_Sat_Long'First;
+      else
+         return To_Fixed_Sat_Long (C);
+      end if;
    end "+";
 
    overriding
    function "-" (A, B : Fixed_Sat_Long) return Fixed_Sat_Long is
-      pragma Unsuppress (Overflow_Check);
+      pragma Suppress (Overflow_Check);
+      C    : Fixed_Integer_Long;
+      Zero : constant Fixed_Integer_Long := 0;
    begin
-      return Fixed_Sat_Long (Fixed_Long (A) - Fixed_Long (B));
-   exception
-      when Constraint_Error =>
-         if A > 0.0 and B < 0.0 then
-            return Fixed_Sat_Long'Last;
-         else
-            return Fixed_Sat_Long'First;
-         end if;
+      C := To_Fixed_Integer_Long (A) - To_Fixed_Integer_Long (B);
+
+      if A > 0.0 and then B < 0.0 and then C < Zero then
+         return Fixed_Sat_Long'Last;
+      elsif A < 0.0 and then B > 0.0 and then C > Zero then
+         return Fixed_Sat_Long'First;
+      else
+         return To_Fixed_Sat_Long (C);
+      end if;
+   end "-";
+
+   overriding
+   function "-" (A : Fixed_Sat_Long) return Fixed_Sat_Long is
+      pragma Suppress (Overflow_Check);
+   begin
+      if A = Fixed_Sat_Long'First then
+         return Fixed_Sat_Long'Last;
+      else
+         return Fixed_Sat_Long (-Fixed_Long (A));
+      end if;
    end "-";
 
    not overriding
    function "*" (A, B : Fixed_Sat_Long) return Fixed_Sat_Long is
-      pragma Unsuppress (Overflow_Check);
+      pragma Suppress (Overflow_Check);
    begin
-      return Fixed_Sat_Long (Fixed_Long (A) * Fixed_Long (B));
-   exception
-      when Constraint_Error =>
-         if (A > 0.0 and B > 0.0) or (A < 0.0 and B < 0.0) then
-            return Fixed_Sat_Long'Last;
-         else
-            return Fixed_Sat_Long'First;
-         end if;
+      if A = Fixed_Sat_Long'First and then B = Fixed_Sat_Long'First then
+         return Fixed_Sat_Long'Last;
+      else
+         return Fixed_Sat_Long (Fixed_Long (A) * Fixed_Long (B));
+      end if;
    end "*";
 
    overriding
