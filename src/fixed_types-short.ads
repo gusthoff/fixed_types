@@ -42,7 +42,8 @@ package Fixed_Types.Short is
    pragma Suppress (Range_Check, on => Fixed_Short);
 --   pragma Suppress (All_checks, on => Fixed_Short);
 
-   type Fixed_Integer_Short is new Short_Integer
+   type Fixed_Integer_Short is range
+     -2**(Fixed_Depth - 1) .. 2**(Fixed_Depth - 1) - 1
      with Size => Fixed_Depth;
 
    type Modular_Short is mod 2 ** Fixed_Depth with Size => Fixed_Depth;

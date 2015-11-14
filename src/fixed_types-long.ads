@@ -42,7 +42,8 @@ package Fixed_Types.Long is
    pragma Suppress (Range_Check, on => Fixed_Long);
    --      pragma Suppress (All_checks, on => Fixed_Long);
 
-   type Fixed_Integer_Long is new Integer
+   type Fixed_Integer_Long is range
+     -2**(Fixed_Depth - 1) .. 2**(Fixed_Depth - 1) - 1
      with Size => Fixed_Depth;
 
    type Modular_Long is mod 2 ** Fixed_Depth with Size => Fixed_Depth;
